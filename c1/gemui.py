@@ -38,7 +38,7 @@ def decrypt_message(data):
 def await_handshake():
     s = socket.socket()
     global ss
-    port = 12345
+    port = 12346
 
     s.bind(('',port))
     print("socket binded to ", port)
