@@ -1,6 +1,42 @@
 # first of all import the socket library
 import socket               
- 
+import subprocess
+
+# private_key = subprocess.run(["openssl", "genrsa", "-out", "private.pem", "2048"], capture_output=True, text=True)
+
+# public_key = subprocess.run(["openssl", "rsa", "-pubout", "-in", "private.pem", "-out", "public.pem"], capture_output=True, text=True)
+
+# message = input("Enter your message\n")
+
+# with open("message.txt", "w") as f:
+#     f.write(message)
+
+# encrypted_message = subprocess.run(["openssl", "rsautl", "-encrypt", "-pubin", "-in", "message.txt", "-out", "encrypted_message.bin", "-inkey", "public.pem"],capture_output=True, text=True)
+
+# with open("encrypted_message.bin", "rb") as f:
+#     data = f.read()
+
+# decrypted_message = subprocess.run(["openssl", "rsautl", "-decrypt", "-in", "encrypted_message.bin", "-out", "decrypted_message.txt", "-inkey", "private.pem"], capture_output=True, text=True)
+
+
+def genhandshake(c):
+   private_key = subprocess.run(["openssl", "genrsa", "-out", "mprivate.pem", "2048"], capture_output=True, text=True)
+   public_key = subprocess.run(["openssl", "rsa", "-pubout", "-in", "mprivate.pem", "-out", "mpublic.pem"], capture_output=True, text=True)
+
+   with open("mpublic.pem", "rb") as f:
+      data = f.read()
+   
+   c.sendall(data)
+
+def decrypt_message(data):
+   with open("encrypted.bin", "wb") as f:
+      f.write(data)
+      f.close()
+   decrypted_message = subprocess.run(["openssl", "rsautl", "-decrypt", "-in", "encrypted.bin", "-out", "decrypted.txt", "-inkey", "private.pem"], capture_output=True, text=True)
+   with open("decrypted.txt", "r") as f:
+      output=f.read(4096)
+   return output
+
 # next create a socket object
 s = socket.socket()         
 print("Socket successfully created")
@@ -29,17 +65,19 @@ while True:
    c, addr = s.accept()     
    print('Got connection from', addr)
 
+   genhandshake(c=c)
+
    # Get data from client
-   data=c.recv(1024).decode()
+   data=c.recv(4096)
+   print(decrypt_message(data=data))
+ 
    
-   #Reverse data received from client
-   data = data[::-1]
 
    if not data:
       break
    
    # Send back reversed data to client   
-   c.sendall(bytes(data,'utf-8'))
+   # c.sendall(bytes(data,'utf-8'))
 
 
    # send a thank you message to the client. 
