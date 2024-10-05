@@ -109,6 +109,7 @@ def initiate_handshake(ip_address):
 # Thread to handle incoming messages
 def receive_messages(s):
     while True:
+        print("awaiting messages")
         data = s.recv(4096)
         if(data):
             print("message received")
@@ -141,36 +142,51 @@ def connect(receiver_ip):
     message_entry.config(state=tk.NORMAL)
     send_button.config(state=tk.NORMAL)
 
+
+
 # Main window
 window = tk.Tk()
-window.title("c1")
+window.title("Chat Application")
+window.geometry("400x600")  # Set a fixed window size
+window.configure(bg="#f0f0f0")
 
-# Receiver IP entry
-receiver_ip_label = tk.Label(window, text="Enter Receiver's IP Address:")
-receiver_ip_label.pack()
-receiver_ip_entry = tk.Entry(window)
-receiver_ip_entry.pack()
-receiver_ip_button = tk.Button(window, text="Connect", command=lambda: connect(receiver_ip_entry.get()))
-receiver_ip_button.pack()
-ipa = receiver_ip_entry.get()
+# Receiver IP entry frame
+ip_frame = tk.Frame(window, bg="#f0f0f0")
+ip_frame.pack(pady=10)
+
+receiver_ip_label = tk.Label(ip_frame, text="Enter Receiver's IP Address:", bg="#f0f0f0")
+receiver_ip_label.pack(side=tk.LEFT, padx=5)
+
+receiver_ip_entry = tk.Entry(ip_frame, width=20)
+receiver_ip_entry.pack(side=tk.LEFT, padx=5)
+
+receiver_ip_button = tk.Button(ip_frame, text="Connect", command=lambda: connect(receiver_ip_entry.get()))
+receiver_ip_button.pack(side=tk.LEFT, padx=5)
 
 # Message window
-messages_frame = tk.Frame(window)
-messages_frame.pack(fill=tk.BOTH, expand=True)
+messages_frame = tk.Frame(window, bg="#ffffff")
+messages_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
 messages_scrollbar = tk.Scrollbar(messages_frame, orient=tk.VERTICAL)
-messages = tk.Listbox(messages_frame, yscrollcommand=messages_scrollbar.set)
-messages.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 messages_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-def testfunc():
-    print("test func fired")
+messages = tk.Listbox(messages_frame, yscrollcommand=messages_scrollbar.set, bg="#f9f9f9", font=("Helvetica", 12), bd=0)
+messages.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-# Message entry
-message_entry = tk.Entry(window)
-message_entry.pack()
-send_button = tk.Button(window, text="Send", command=send_message,)
-send_button.pack() 
+messages_scrollbar.config(command=messages.yview)
 
+# Message entry frame
+message_frame = tk.Frame(window, bg="#f0f0f0")
+message_frame.pack(pady=10)
+
+message_entry = tk.Entry(message_frame, width=28, font=("Helvetica", 12))
+message_entry.pack(side=tk.LEFT, padx=5)
+
+send_button = tk.Button(message_frame, text="Send", command=send_message, bg="#4CAF50", fg="white")
+send_button.pack(side=tk.LEFT, padx=5)
+
+# Start handshake in a separate thread
 hand_thread = threading.Thread(target=await_handshake)
 hand_thread.start()
+
 window.mainloop()

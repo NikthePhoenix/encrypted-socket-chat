@@ -1,5 +1,5 @@
-import tk
-from _tkinter 
+import tkinter as tk
+from tkinter import scrolledtext
 
 class ChatApplication:
     def _init_(self, root):
@@ -33,8 +33,8 @@ class ChatApplication:
         self.chat_window.yview(tk.END)
         self.chat_window.config(state=tk.DISABLED)
     
-if _name_ == "_main_":
+if __name__ == "__main__":
     root = tk.Tk()
-    app = ChatApplication(root)
+    app = ChatApplication()
     root.geometry("400x500")
     root.mainloop()
